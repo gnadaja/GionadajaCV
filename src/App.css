@@ -1,0 +1,317 @@
+/* Estilos generales del portfolio */
+:root {
+  font-family: Inter, Arial, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  color: #f4f4f5;
+  background: #0f172a;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
+  color: #e5e7eb;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+ul {
+  list-style: none;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.app-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+}
+
+.section {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 18px;
+  padding: 28px 24px;
+  margin-bottom: 28px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
+}
+
+.section-title {
+  font-size: clamp(1.6rem, 2vw, 2.2rem);
+  margin-bottom: 18px;
+  color: #f8fafc;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  align-items: center;
+  gap: 28px;
+  min-height: 70vh;
+}
+
+.hero-text h1 {
+  font-size: clamp(2.4rem, 5vw, 4.6rem);
+  line-height: 1.05;
+  margin-bottom: 14px;
+}
+
+.hero-role {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(96, 165, 250, 0.12);
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  color: #bfdbfe;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+
+.hero-intro {
+  font-size: 1.05rem;
+  color: #cbd5e1;
+  max-width: 640px;
+  margin-bottom: 18px;
+}
+
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  color: #bae6fd;
+  font-size: 0.9rem;
+}
+
+.hero-card {
+  background: rgba(15, 118, 110, 0.15);
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.hero-card h3 {
+  margin-bottom: 16px;
+  color: #ccfbf1;
+}
+
+.hero-card ul li {
+  margin-bottom: 10px;
+  color: #d1fae5;
+}
+
+.about-text {
+  color: #dbeafe;
+  font-size: 1.02rem;
+}
+
+.skill-list,
+.project-list,
+.experience-list,
+.language-list {
+  display: grid;
+  gap: 14px;
+}
+
+.skill-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+}
+
+.skill-item {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: #e2e8f0;
+  text-align: center;
+  font-weight: 600;
+}
+
+.experience-item,
+.project-item {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 14px;
+  padding: 18px 18px;
+}
+
+.experience-item h3,
+.project-item h3 {
+  margin-bottom: 6px;
+  color: #f8fafc;
+}
+
+.experience-meta,
+.project-meta {
+  color: #93c5fd;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+}
+
+.experience-item p,
+.project-item p {
+  color: #dbeafe;
+}
+
+.status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 999px;
+  margin-top: 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.status.active {
+  background: rgba(34, 197, 94, 0.15);
+  color: #bbf7d0;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.status.finished {
+  background: rgba(96, 165, 250, 0.15);
+  color: #bfdbfe;
+  border: 1px solid rgba(96, 165, 250, 0.35);
+}
+
+.github-list {
+  display: grid;
+  gap: 14px;
+}
+
+.repo-card {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.repo-card h3 {
+  margin-bottom: 8px;
+}
+
+.repo-card p {
+  color: #dbeafe;
+  margin-bottom: 10px;
+}
+
+.repo-link {
+  color: #7dd3fc;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.loading,
+.error,
+.empty {
+  padding: 16px;
+  border-radius: 12px;
+  margin-top: 10px;
+}
+
+.loading {
+  background: rgba(59, 130, 246, 0.12);
+  color: #dbeafe;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.error {
+  background: rgba(239, 68, 68, 0.12);
+  color: #fecaca;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.empty {
+  background: rgba(148, 163, 184, 0.08);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.contact-form {
+  display: grid;
+  gap: 15px;
+  max-width: 700px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field label {
+  color: #e2e8f0;
+  font-weight: 600;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.85);
+  color: #f8fafc;
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: 2px solid rgba(96, 165, 250, 0.5);
+  border-color: rgba(96, 165, 250, 0.5);
+}
+
+.submit-btn {
+  width: fit-content;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+  transition: transform 0.2s ease;
+}
+
+.submit-btn:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 780px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .section {
+    padding: 22px 18px;
+  }
+}
