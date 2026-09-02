@@ -1,3 +1,4 @@
+import { useLanguage } from '../context/LanguageContext';
 import ExperienciaItem from './ExperienciaItem';
 
 // Experiencia conforma la lista de trabajos usando datos en un array.
@@ -22,9 +23,11 @@ const experiencias = [
 ];
 
 function Experiencia() {
+  const { t } = useLanguage();
+
   return (
     <section className="section">
-      <h2 className="section-title">Experiencia</h2>
+      <h2 className="section-title">{t('experiencias_titulo')}</h2>
       <div className="experience-list">
         {experiencias.map((item) => (
           <ExperienciaItem

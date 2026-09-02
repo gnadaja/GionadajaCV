@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 
 const API_BASE_URL = 'https://TU-SITIO.infinityfreeapp.com';
 
 // Registro permite crear un usuario nuevo usando el endpoint PHP del backend real.
 // La demo es solo para practicar autenticación y no reemplaza un sistema de producción.
 function Register() {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
@@ -13,6 +15,7 @@ function Register() {
     confirmPassword: '',
   });
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -27,13 +30,17 @@ function Register() {
     event.preventDefault();
     setMessage({ type: '', text: '' });
 
+    if (isSubmitting) return;
+
     if (formData.password !== formData.confirmPassword) {
       setMessage({
         type: 'error',
-        text: 'Las contraseñas no coinciden.',
+        text: t('register_error_password'),
       });
       return;
     }
+
+    setIsSubmitting(true);
 
     try {
       const response = await fetch(`${API_BASE_URL}/registro.php`, {
@@ -58,12 +65,12 @@ function Register() {
       }
 
       if (!response.ok || data.success === false) {
-        throw new Error(data.message || 'No se pudo completar el registro.');
+        throw new Error(data.message || t('register_error'));
       }
 
       setMessage({
         type: 'success',
-        text: data.message || 'Usuario registrado con éxito.',
+        text: data.message || t('register_exito'),
       });
 
       setFormData({
@@ -75,81 +82,81 @@ function Register() {
     } catch (error) {
       setMessage({
         type: 'error',
-        text: error.message || 'Hubo un error al enviar el formulario.',
+        text: error.message || t('register_error'),
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <h1>Registrarme</h1>
-        <p className="auth-description">
-          Esta demo de portfolio sirve para practicar autenticación con un backend PHP real.
-        </p>
+        <h1>{t('register_titulo')}</h1>
+        <p className="auth-description">{t('register_descripcion')}</p>
 
         {message.text && <span className={`message ${message.type}`}>{message.text}</span>}
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="field">
-            <label htmlFor="register-name">Nombre</label>
+            <label htmlFor="register-name">{t('form_nombre')}</label>
             <input
               id="register-name"
               name="nombre"
               type="text"
               value={formData.nombre}
               onChange={handleChange}
-              placeholder="Tu nombre"
+              placeholder={t('form_placeholder_nombre')}
               required
             />
           </div>
 
           <div className="field">
-            <label htmlFor="register-email">Email</label>
+            <label htmlFor="register-email">{t('form_email')}</label>
             <input
               id="register-email"
               name="email"
               type="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="tuemail@example.com"
+              placeholder={t('form_placeholder_email')}
               required
             />
           </div>
 
           <div className="field">
-            <label htmlFor="register-password">Password</label>
+            <label htmlFor="register-password">{t('form_password')}</label>
             <input
               id="register-password"
               name="password"
               type="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="••••••••"
+              placeholder={t('form_placeholder_password')}
               required
             />
           </div>
 
           <div className="field">
-            <label htmlFor="register-confirm-password">Confirmar password</label>
+            <label htmlFor="register-confirm-password">{t('form_confirm_password')}</label>
             <input
               id="register-confirm-password"
               name="confirmPassword"
               type="password"
               value={formData.confirmPassword}
               onChange={handleChange}
-              placeholder="Repetí la contraseña"
+              placeholder={t('form_placeholder_confirm')}
               required
             />
           </div>
 
-          <button type="submit" className="submit-btn">
-            Crear cuenta
+          <button type="submit" className="submit-btn" disabled={isSubmitting}>
+            {isSubmitting ? t('auth_loading') : t('form_crear_cuenta')}
           </button>
         </form>
 
         <p className="form-note">
-          ¿Ya tenés cuenta? <Link to="/login">Iniciá sesión</Link>
+          {t('form_ya_tienes_cuenta')} <Link to="/login">{t('register_link')}</Link>
         </p>
       </div>
     </div>

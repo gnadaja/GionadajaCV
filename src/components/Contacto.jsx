@@ -1,13 +1,16 @@
 import { useState } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 // Contacto maneja un formulario controlado con useState.
 // En este caso solo se muestran los datos en consola, porque no hay backend.
 function Contacto() {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
-    mensaje: '',
   });
+  const [status, setStatus] = useState({ type: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -18,67 +21,90 @@ function Contacto() {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setStatus({ type: '', message: '' });
 
-    // Aquí guardamos los datos del formulario en la consola del navegador.
-    // Esto sirve para simular el envío sin backend.
-    console.log('Formulario enviado:', formData);
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
-    // Se limpia el formulario después del envío.
-    setFormData({
-      nombre: '',
-      email: '',
-      mensaje: '',
-    });
+    try {
+      const response = await fetch('/send-cv.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nombre: formData.nombre,
+          email: formData.email,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Error al enviar la solicitud.');
+      }
+
+      setStatus({
+        type: 'success',
+        message: result.message || 'Tu solicitud se envió correctamente.',
+      });
+
+      setFormData({ nombre: '', email: '' });
+    } catch (error) {
+      setStatus({
+        type: 'error',
+        message: error.message || 'No se pudo enviar la solicitud.',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <section className="section">
-      <h2 className="section-title">Contacto</h2>
+    <section className="section contact-card">
+      <h2 className="section-title">{t('contacto_titulo')}</h2>
+      <p className="contact-demo-note">
+        Demo funcional de lo que puede desarrollarse para una web comercial, con formulario integrado
+        a backend y envío real de la solicitud.
+      </p>
 
       <form className="contact-form" onSubmit={handleSubmit}>
         <div className="field">
-          <label htmlFor="nombre">Nombre</label>
+          <label htmlFor="nombre">{t('contacto_nombre')}</label>
           <input
             id="nombre"
             name="nombre"
             type="text"
             value={formData.nombre}
             onChange={handleChange}
-            placeholder="Tu nombre"
+            placeholder={t('contacto_placeholder_nombre')}
             required
           />
         </div>
 
         <div className="field">
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email">{t('form_email')}</label>
           <input
             id="email"
             name="email"
             type="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="tuemail@example.com"
+            placeholder={t('contacto_placeholder_email')}
             required
           />
         </div>
 
-        <div className="field">
-          <label htmlFor="mensaje">Mensaje</label>
-          <textarea
-            id="mensaje"
-            name="mensaje"
-            rows="5"
-            value={formData.mensaje}
-            onChange={handleChange}
-            placeholder="Escribí tu mensaje..."
-            required
-          />
-        </div>
+        {status.message && (
+          <div className={status.type === 'success' ? 'success-message' : 'error-message'}>
+            {status.message}
+          </div>
+        )}
 
-        <button type="submit" className="submit-btn">
-          Enviar mensaje
+        <button type="submit" className="submit-btn" disabled={isSubmitting}>
+          {isSubmitting ? t('auth_loading') : t('contacto_enviar')}
         </button>
       </form>
     </section>

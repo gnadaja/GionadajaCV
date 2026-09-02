@@ -1,3 +1,5 @@
+import { useLanguage } from '../context/LanguageContext';
+
 // Proyectos muestra una lista con diferentes tipos de trabajos y proyectos.
 // Se usa renderizado condicional para mostrar si están en curso o finalizados.
 const proyectos = [
@@ -22,9 +24,11 @@ const proyectos = [
 ];
 
 function Proyectos() {
+  const { t } = useLanguage();
+
   return (
     <section className="section">
-      <h2 className="section-title">Proyectos</h2>
+      <h2 className="section-title">{t('proyectos_titulo')}</h2>
       <div className="project-list">
         {proyectos.map((proyecto) => (
           <article key={proyecto.nombre} className="project-item">
@@ -35,9 +39,9 @@ function Proyectos() {
             <p>{proyecto.descripcion}</p>
 
             {proyecto.estado === 'en curso' ? (
-              <span className="status active">En curso</span>
+              <span className="status active">{t('proyectos_en_curso')}</span>
             ) : (
-              <span className="status finished">Finalizado</span>
+              <span className="status finished">{t('proyectos_finalizado')}</span>
             )}
           </article>
         ))}

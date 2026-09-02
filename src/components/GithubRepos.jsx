@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 // GithubRepos consulta la API pública de GitHub para mostrar repositorios.
 // useEffect se usa para ejecutar la petición cuando el componente se monta.
 // También se manejan estados de carga y error para mejorar la experiencia.
 function GithubRepos() {
+  const { t } = useLanguage();
   const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -11,34 +13,35 @@ function GithubRepos() {
   useEffect(() => {
     const fetchRepos = async () => {
       try {
-        const response = await fetch('https://api.github.com/users/USERNAME/repos');
+        const username = 'gnadaja';
+        const response = await fetch(`https://api.github.com/users/${username}/repos`);
 
         if (!response.ok) {
-          throw new Error('No se pudieron cargar los repositorios.');
+          throw new Error(t('contacto_form_error'));
         }
 
         const data = await response.json();
         setRepos(data);
       } catch (err) {
-        setError('Ocurrió un error al intentar traer los repositorios de GitHub.');
+        setError(t('contacto_form_error'));
       } finally {
         setLoading(false);
       }
     };
 
     fetchRepos();
-  }, []);
+  }, [t]);
 
   return (
     <section className="section">
-      <h2 className="section-title">Repositorios de GitHub</h2>
+      <h2 className="section-title">{t('github_titulo')}</h2>
 
-      {loading && <div className="loading">Cargando repositorios...</div>}
+      {loading && <div className="loading">{t('contacto_form_loading')}</div>}
 
       {error && <div className="error">{error}</div>}
 
       {!loading && !error && repos.length === 0 && (
-        <div className="empty">No hay repositorios para mostrar.</div>
+        <div className="empty">{t('contacto_form_empty')}</div>
       )}
 
       {!loading && !error && repos.length > 0 && (
@@ -46,9 +49,9 @@ function GithubRepos() {
           {repos.map((repo) => (
             <article key={repo.id} className="repo-card">
               <h3>{repo.name}</h3>
-              <p>{repo.description || 'Sin descripción disponible.'}</p>
+              <p>{repo.description || t('github_sin_desc')}</p>
               <a className="repo-link" href={repo.html_url} target="_blank" rel="noreferrer">
-                Ver repositorio
+                {t('github_ver_repo')}
               </a>
             </article>
           ))}

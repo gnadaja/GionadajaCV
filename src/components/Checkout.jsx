@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 
 // Checkout es una simulación de checkout: valida datos del lado del cliente y muestra
 // una confirmación final sin procesar pagos reales. La nota se deja visible para aclararlo.
 function Checkout() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     cardNumber: '',
     expiry: '',
@@ -15,10 +17,13 @@ function Checkout() {
   const [orderCode, setOrderCode] = useState('');
 
   const cartItems = location.state?.items || [];
+  const shippingCost = location.state?.shippingCost || 0;
+  const shippingMethod = location.state?.shippingMethod || 'Envío estándar';
   const total = useMemo(
     () => cartItems.reduce((sum, item) => sum + item.precio * item.cantidad, 0),
     [cartItems]
   );
+  const totalConEnvio = total + shippingCost;
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -33,22 +38,22 @@ function Checkout() {
     const cvvPattern = /^\d{3}$/;
 
     if (digits.length !== 16 || !/^\d+$/.test(digits)) {
-      alert('La tarjeta debe tener 16 dígitos numéricos.');
+      alert(t('checkout_error_tarjeta'));
       return;
     }
 
     if (!expiryPattern.test(formData.expiry)) {
-      alert('La fecha debe tener formato MM/AA.');
+      alert(t('checkout_error_vencimiento'));
       return;
     }
 
     if (!cvvPattern.test(formData.cvv)) {
-      alert('El CVV debe tener 3 dígitos.');
+      alert(t('checkout_error_cvv'));
       return;
     }
 
     if (!formData.cardName.trim()) {
-      alert('El nombre del titular es obligatorio.');
+      alert(t('checkout_error_titular'));
       return;
     }
 
@@ -60,12 +65,14 @@ function Checkout() {
     return (
       <div className="checkout-page">
         <div className="checkout-success">
-          <h2>¡Compra confirmada!</h2>
-          <p>Gracias por tu compra. Esta es una simulación y no procesa pagos reales.</p>
-          <span className="order-code">N° de orden: {orderCode}</span>
+          <h2>{t('checkout_confirmado')}</h2>
+          <p>{t('checkout_gracias')}</p>
+          <span className="order-code">
+            {t('checkout_orden')}: {orderCode}
+          </span>
           <div style={{ marginTop: '20px' }}>
             <button type="button" className="primary-btn" onClick={() => navigate('/ecommerce')}>
-              Volver a la tienda
+              {t('checkout_volver')}
             </button>
           </div>
         </div>
@@ -77,14 +84,12 @@ function Checkout() {
     <div className="checkout-page">
       <div className="checkout-grid">
         <div className="checkout-card">
-          <h1>Finalizar compra</h1>
-          <p className="checkout-note">
-            Esta es una simulación de checkout para practicar frontend. No se procesan pagos reales.
-          </p>
+          <h1>{t('checkout_titulo')}</h1>
+          <p className="checkout-note">{t('checkout_note')}</p>
 
           <form className="checkout-form" onSubmit={handleSubmit}>
             <div className="field">
-              <label htmlFor="cardNumber">Número de tarjeta</label>
+              <label htmlFor="cardNumber">{t('checkout_tarjeta')}</label>
               <input
                 id="cardNumber"
                 name="cardNumber"
@@ -102,7 +107,7 @@ function Checkout() {
             </div>
 
             <div className="field">
-              <label htmlFor="expiry">Fecha de vencimiento</label>
+              <label htmlFor="expiry">{t('checkout_vencimiento')}</label>
               <input
                 id="expiry"
                 name="expiry"
@@ -121,7 +126,7 @@ function Checkout() {
             </div>
 
             <div className="field">
-              <label htmlFor="cvv">CVV</label>
+              <label htmlFor="cvv">{t('checkout_cvv')}</label>
               <input
                 id="cvv"
                 name="cvv"
@@ -136,7 +141,7 @@ function Checkout() {
             </div>
 
             <div className="field">
-              <label htmlFor="cardName">Nombre del titular</label>
+              <label htmlFor="cardName">{t('checkout_titular')}</label>
               <input
                 id="cardName"
                 name="cardName"
@@ -149,16 +154,14 @@ function Checkout() {
             </div>
 
             <button type="submit" className="checkout-btn">
-              Confirmar compra
+              {t('checkout_confirmar')}
             </button>
-            <small className="simulation-note">
-              Simulación: no se realiza procesamiento real de pagos ni validación bancaria.
-            </small>
+            <small className="simulation-note">{t('checkout_simulacion')}</small>
           </form>
         </div>
 
         <aside className="checkout-summary">
-          <h2>Resumen</h2>
+          <h2>{t('checkout_resumen')}</h2>
           <div className="summary-list">
             {cartItems.map((item) => (
               <div key={item.id} className="summary-item">
@@ -169,9 +172,17 @@ function Checkout() {
               </div>
             ))}
           </div>
+          <div className="summary-row">
+            <span>{t('checkout_envio')}</span>
+            <strong>{shippingMethod}</strong>
+          </div>
+          <div className="summary-row">
+            <span>{t('checkout_costo_envio')}</span>
+            <strong>${shippingCost}</strong>
+          </div>
           <div className="summary-row total">
-            <span>Total</span>
-            <strong>${total}</strong>
+            <span>{t('checkout_total')}</span>
+            <strong>${totalConEnvio}</strong>
           </div>
         </aside>
       </div>

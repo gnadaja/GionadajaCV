@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const API_BASE_URL = 'https://TU-SITIO.infinityfreeapp.com';
 
@@ -9,11 +10,13 @@ const API_BASE_URL = 'https://TU-SITIO.infinityfreeapp.com';
 function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -27,6 +30,9 @@ function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setMessage({ type: '', text: '' });
+
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
     try {
       const response = await fetch(`${API_BASE_URL}/login.php`, {
@@ -50,7 +56,7 @@ function Login() {
       }
 
       if (!response.ok || data.success === false) {
-        throw new Error(data.message || 'Credenciales inválidas.');
+        throw new Error(data.message || t('login_incorrecto'));
       }
 
       const nombre = data.nombre || data.user?.nombre || formData.email.split('@')[0];
@@ -58,7 +64,7 @@ function Login() {
       login({ nombre, email: formData.email });
       setMessage({
         type: 'success',
-        text: `Inicio de sesión correcto. Hola, ${nombre}.`,
+        text: `${t('login_exito')} Hola, ${nombre}.`,
       });
 
       setTimeout(() => {
@@ -67,55 +73,55 @@ function Login() {
     } catch (error) {
       setMessage({
         type: 'error',
-        text: error.message || 'No se pudo iniciar sesión.',
+        text: error.message || t('login_error'),
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <h1>Iniciar sesión</h1>
-        <p className="auth-description">
-          Esta demo de portfolio sirve para practicar autenticación con un backend PHP real.
-        </p>
+        <h1>{t('login_titulo')}</h1>
+        <p className="auth-description">{t('login_descripcion')}</p>
 
         {message.text && <span className={`message ${message.type}`}>{message.text}</span>}
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="field">
-            <label htmlFor="login-email">Email</label>
+            <label htmlFor="login-email">{t('form_email')}</label>
             <input
               id="login-email"
               name="email"
               type="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="tuemail@example.com"
+              placeholder={t('form_placeholder_email')}
               required
             />
           </div>
 
           <div className="field">
-            <label htmlFor="login-password">Password</label>
+            <label htmlFor="login-password">{t('form_password')}</label>
             <input
               id="login-password"
               name="password"
               type="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="••••••••"
+              placeholder={t('form_placeholder_password')}
               required
             />
           </div>
 
-          <button type="submit" className="submit-btn">
-            Ingresar
+          <button type="submit" className="submit-btn" disabled={isSubmitting}>
+            {isSubmitting ? t('auth_loading') : t('form_ingresar')}
           </button>
         </form>
 
         <p className="form-note">
-          ¿Todavía no tenés cuenta? <Link to="/registro">Registrate acá</Link>
+          {t('form_no_tienes_cuenta')} <Link to="/registro">{t('form_registrate')}</Link>
         </p>
       </div>
     </div>
