@@ -2,11 +2,9 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { supabase } from '../lib/supabase';
 
-const API_BASE_URL = 'https://TU-SITIO.infinityfreeapp.com';
-
-// Login se conecta al backend PHP real y guarda el usuario si la autenticación es exitosa.
-// Este flujo es una demostración de portfolio para practicar autenticación, no un sistema de producción.
+// Login utiliza Supabase cuando está configurado y cae a una demo local si no lo está.
 function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -35,31 +33,31 @@ function Login() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/login.php`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      if (supabase) {
+        const { data, error } = await supabase.auth.signInWithPassword({
           email: formData.email,
           password: formData.password,
-        }),
-      });
+        });
 
-      const rawText = await response.text();
-      let data = {};
+        if (error) {
+          throw error;
+        }
 
-      try {
-        data = rawText ? JSON.parse(rawText) : {};
-      } catch (error) {
-        data = { message: rawText || 'Respuesta inválida del servidor.' };
+        const nombre = data.user.user_metadata?.nombre || data.user.email?.split('@')[0] || 'Usuario';
+
+        login({ nombre, email: data.user.email });
+        setMessage({
+          type: 'success',
+          text: `${t('login_exito')} Hola, ${nombre}.`,
+        });
+
+        setTimeout(() => {
+          navigate('/');
+        }, 700);
+        return;
       }
 
-      if (!response.ok || data.success === false) {
-        throw new Error(data.message || t('login_incorrecto'));
-      }
-
-      const nombre = data.nombre || data.user?.nombre || formData.email.split('@')[0];
+      const nombre = formData.email.split('@')[0];
 
       login({ nombre, email: formData.email });
       setMessage({

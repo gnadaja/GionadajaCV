@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
+import { supabase } from '../lib/supabase';
 
-const API_BASE_URL = 'https://TU-SITIO.infinityfreeapp.com';
-
-// Registro permite crear un usuario nuevo usando el endpoint PHP del backend real.
-// La demo es solo para practicar autenticación y no reemplaza un sistema de producción.
+// Registro usa Supabase cuando está configurado; si no, mantiene una demo local segura para la app.
 function Register() {
   const { t } = useLanguage();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
@@ -43,34 +43,44 @@ function Register() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/registro.php`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nombre: formData.nombre,
+      if (supabase) {
+        const { data, error } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
-        }),
-      });
+          options: {
+            data: {
+              nombre: formData.nombre,
+            },
+          },
+        });
 
-      const rawText = await response.text();
-      let data = {};
+        if (error) {
+          throw error;
+        }
 
-      try {
-        data = rawText ? JSON.parse(rawText) : {};
-      } catch (error) {
-        data = { message: rawText || 'No se pudo registrar el usuario.' };
+        const nombre = formData.nombre || formData.email.split('@')[0];
+
+        login({ nombre, email: formData.email });
+        setMessage({
+          type: 'success',
+          text: data.user?.identities?.length ? t('register_exito') : 'Revisa tu correo para confirmar la cuenta.',
+        });
+
+        setFormData({
+          nombre: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+        });
+        return;
       }
 
-      if (!response.ok || data.success === false) {
-        throw new Error(data.message || t('register_error'));
-      }
+      const nombre = formData.nombre || formData.email.split('@')[0];
 
+      login({ nombre, email: formData.email });
       setMessage({
         type: 'success',
-        text: data.message || t('register_exito'),
+        text: t('register_exito'),
       });
 
       setFormData({

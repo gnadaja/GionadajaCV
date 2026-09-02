@@ -74,8 +74,8 @@ function Navbar({ openLanguageModal }) {
                 <button
                   type="button"
                   className="secondary-btn"
-                  onClick={() => {
-                    logout();
+                  onClick={async () => {
+                    await logout();
                     closeMenu();
                   }}
                 >

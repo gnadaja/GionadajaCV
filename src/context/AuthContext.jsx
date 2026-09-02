@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { supabase } from '../lib/supabase';
 
 // AuthContext centraliza el estado del usuario logueado para que cualquier componente
 // pueda leerlo y actualizarlo sin pasar props manualmente por toda la app.
@@ -24,11 +25,35 @@ export function AuthProvider({ children }) {
     localStorage.removeItem('portfolioUser');
   }, [user]);
 
+  useEffect(() => {
+    if (!supabase) return undefined;
+
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        const nextUser = {
+          nombre: session.user.user_metadata?.nombre || session.user.email?.split('@')[0] || 'Usuario',
+          email: session.user.email,
+        };
+
+        setUser(nextUser);
+        return;
+      }
+
+      setUser(null);
+    });
+
+    return () => data.subscription.unsubscribe();
+  }, []);
+
   const login = (userData) => {
     setUser(userData);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
+
     setUser(null);
   };
 

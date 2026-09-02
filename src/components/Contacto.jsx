@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import { submitCvRequest } from '../lib/supabase';
 import { useLanguage } from '../context/LanguageContext';
 
-// Contacto maneja un formulario controlado con useState.
-// En este caso solo se muestran los datos en consola, porque no hay backend.
+// Contacto usa Supabase cuando está configurado; en caso contrario mantiene una respuesta demo segura.
 function Contacto() {
   const { t } = useLanguage();
   const [formData, setFormData] = useState({
@@ -29,22 +29,10 @@ function Contacto() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('/send-cv.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nombre: formData.nombre,
-          email: formData.email,
-        }),
+      const result = await submitCvRequest({
+        nombre: formData.nombre,
+        email: formData.email,
       });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || 'Error al enviar la solicitud.');
-      }
 
       setStatus({
         type: 'success',
