@@ -6,25 +6,35 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 export const supabase = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
 export async function submitCvRequest({ nombre, email }) {
-  if (!supabase) {
-    return {
-      message: 'Demo local activa: tu solicitud fue registrada en la sesión actual.',
-    };
+  const emailResponse = await fetch('/api/send-cv', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ nombre, email }),
+  });
+
+  const emailResult = await emailResponse.json();
+
+  if (!emailResponse.ok) {
+    throw new Error(emailResult.message || 'No se pudo enviar el CV.');
   }
 
-  const { error } = await supabase.from('cv_requests').insert([
-    {
-      nombre,
-      email,
-      created_at: new Date().toISOString(),
-    },
-  ]);
+  if (supabase) {
+    const { error } = await supabase.from('cv_requests').insert([
+      {
+        nombre,
+        email,
+        created_at: new Date().toISOString(),
+      },
+    ]);
 
-  if (error) {
-    throw new Error(error.message || 'No se pudo guardar la solicitud.');
+    if (error) {
+      console.error('No se pudo guardar la solicitud en Supabase:', error);
+    }
   }
 
   return {
-    message: 'Tu solicitud se envió correctamente.',
+    message: emailResult.message || 'Tu solicitud se envió correctamente.',
   };
 }
