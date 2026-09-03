@@ -1738,6 +1738,7 @@ textarea {
   min-height: 100vh;
   background: var(--soft-blue);
   color: var(--text);
+  overflow-x: hidden;
 }
 
 .dashboard-topbar {
@@ -1764,7 +1765,7 @@ textarea {
 }
 
 .dashboard-brand {
-  color: #fff;
+  color: var(--primary-strong);
   font-weight: 900;
   letter-spacing: 0.13em;
 }
@@ -1948,6 +1949,11 @@ textarea {
   border-top: 1px solid var(--surface-muted);
   color: #34424d;
   font-weight: 700;
+}
+
+.dashboard-product-row > span:nth-child(2) {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .dashboard-product-rank {
@@ -2324,8 +2330,35 @@ textarea {
 
 @media (max-width: 560px) {
   .dashboard-topbar {
-    gap: 10px;
-    padding-inline: 16px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+
+  .dashboard-topbar .dashboard-brand {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+    width: auto;
+    text-align: center;
+  }
+
+  .dashboard-topbar .dashboard-back {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .dashboard-topbar .dashboard-mobile-menu {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .dashboard-topbar .dashboard-live {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: center;
+    margin-left: 0;
   }
 
   .dashboard-back span,
@@ -2348,6 +2381,24 @@ textarea {
 
   .settings-row input[type='checkbox'] {
     justify-self: start;
+  }
+
+  .dashboard-shell .dashboard-content {
+    padding-inline: 14px;
+  }
+
+  .dashboard-panel {
+    padding: 16px;
+  }
+
+  .dashboard-panel-heading {
+    flex-wrap: wrap;
+  }
+
+  .dashboard-product-row {
+    grid-template-columns: 28px minmax(0, 1fr) auto;
+    gap: 7px;
+    font-size: 0.82rem;
   }
 }
 

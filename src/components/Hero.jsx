@@ -41,7 +41,7 @@ function Hero() {
           <p className="code-line">
             &nbsp;&nbsp;available: <span className="code-key">true</span>,
           </p>
-          <p className="code-line">};</p>
+          <p className="code-line">{'};'}</p>
 
           <div className="code-status-list" aria-label="stack status">
             <div className="code-status-item">
