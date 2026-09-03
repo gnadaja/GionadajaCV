@@ -2057,7 +2057,7 @@ textarea {
   min-height: calc(100vh - 65px);
   padding: 34px 14px 24px;
   border-right: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.58);
+  background: var(--surface);
 }
 
 .dashboard-sidebar-label {
@@ -2296,13 +2296,15 @@ textarea {
   }
 
   .dashboard-sidebar {
-    position: absolute;
+    position: fixed;
     top: 65px;
     left: 0;
+    bottom: 0;
     z-index: 10;
     display: none;
     width: min(270px, 86vw);
-    min-height: calc(100vh - 65px);
+    min-height: 0;
+    overflow-y: auto;
     box-shadow: 12px 12px 28px rgba(91, 63, 232, 0.1);
   }
 
@@ -2325,6 +2327,10 @@ textarea {
 
   .dashboard-shell .dashboard-content {
     padding: 34px 20px 60px;
+  }
+
+  .dashboard-products-layout {
+    grid-template-columns: 1fr;
   }
 }
 
