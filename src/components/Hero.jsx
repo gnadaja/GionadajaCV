@@ -9,7 +9,7 @@ function Hero() {
     <section className="section hero">
       <div className="hero-text">
         <span className="hero-role">{t('hero_role')}</span>
-        <h1>Giovanni<br />Nadaja</h1>
+        <h1>Full Stack<br />Developer Jr.</h1>
         <p className="hero-intro">{t('hero_intro')}</p>
 
         <Link to="/portfolio" className="hero-cta">
@@ -30,7 +30,7 @@ function Hero() {
           </p>
           <p className="code-line">&nbsp;&nbsp;name: <span className="code-string">'Giovanni Nadaja'</span>,</p>
           <p className="code-line">
-            &nbsp;&nbsp;role: <span className="code-string">'Full Stack Developer Jr'</span>,
+            &nbsp;&nbsp;role: <span className="code-string">'Giovanni Nadaja'</span>,
           </p>
           <p className="code-line">
             &nbsp;&nbsp;focus: <span className="code-array">['Web Development', 'Backend', 'React.js']</span>,

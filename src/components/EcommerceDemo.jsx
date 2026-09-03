@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ArrowRight, Menu, ShoppingBag, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 const productosIniciales = [
@@ -23,6 +24,8 @@ function EcommerceDemo() {
   const { t } = useLanguage();
   const [carrito, setCarrito] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [storeMenuOpen, setStoreMenuOpen] = useState(false);
+  const [activeStoreSection, setActiveStoreSection] = useState('inicio');
   const [shippingMethod, setShippingMethod] = useState('standard');
   const [filtros, setFiltros] = useState({
     precio: 'todos',
@@ -113,9 +116,65 @@ function EcommerceDemo() {
     setFiltros((prev) => ({ ...prev, [campo]: valor }));
   };
 
+  const seleccionarCategoria = (modalidad) => {
+    setActiveStoreSection('catalogo');
+    cambiarFiltro('modalidad', modalidad);
+    setTimeout(() => document.getElementById('store-catalog')?.scrollIntoView({ behavior: 'smooth' }), 0);
+    setStoreMenuOpen(false);
+  };
+
+  const mostrarInicio = () => {
+    setActiveStoreSection('inicio');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setStoreMenuOpen(false);
+  };
+
   return (
     <>
       <div className="demo-page">
+        {activeStoreSection === 'inicio' && <section className="store-home" id="store-home">
+          <div className="store-home-copy">
+            <span className="eyebrow">{t('ecommerce_home_eyebrow')}</span>
+            <h1>{t('ecommerce_home_titulo')}</h1>
+            <p>{t('ecommerce_home_descripcion')}</p>
+            <button type="button" className="primary-btn store-home-cta" onClick={() => document.getElementById('store-catalog')?.scrollIntoView({ behavior: 'smooth' })}>
+              <span>{t('ecommerce_home_boton')}</span>
+              <ArrowRight size={17} />
+            </button>
+          </div>
+          <div className="store-home-art" aria-hidden="true">
+            <span className="home-art-label">YOUR BRAND</span>
+            <span className="home-art-number">01</span>
+          </div>
+        </section>}
+
+        {activeStoreSection === 'inicio' && <section className="store-launches">
+          <div className="store-section-heading">
+            <div>
+              <span className="eyebrow">{t('ecommerce_lanzamientos_eyebrow')}</span>
+              <h2>{t('ecommerce_lanzamientos_titulo')}</h2>
+            </div>
+            <button type="button" className="store-text-link" onClick={() => seleccionarCategoria('todos')}>
+              {t('ecommerce_ver_catalogo')} <ArrowRight size={16} />
+            </button>
+          </div>
+          <div className="launch-grid">
+            {productosIniciales.slice(0, 3).map((producto) => (
+              <article className="launch-card" key={producto.id}>
+                <div className="launch-card-image" aria-hidden="true">{producto.icono}</div>
+                <div>
+                  <span>{producto.modalidad}</span>
+                  <h3>{producto.nombre}</h3>
+                  <strong>${producto.precio}</strong>
+                </div>
+                <button type="button" className="launch-add" onClick={() => agregarAlCarrito(producto)} aria-label={`${t('ecommerce_agregar')} ${producto.nombre}`}>
+                  <ShoppingBag size={16} />
+                </button>
+              </article>
+            ))}
+          </div>
+        </section>}
+
         <div className="demo-header">
           <div className="store-header">
             <button type="button" className="secondary-btn back-btn" onClick={() => navigate('/portfolio')}>
@@ -127,14 +186,41 @@ function EcommerceDemo() {
               <p className="demo-description">{t('ecommerce_descripcion')}</p>
             </div>
 
-            <button type="button" className="cart-toggle" onClick={() => setDrawerOpen((prev) => !prev)}>
-              {t('ecommerce_carrito')}
-              <span className="cart-badge">{totalItems}</span>
-            </button>
           </div>
         </div>
 
-        <div className="store-layout">
+        <div className="store-navbar">
+          <button type="button" className="store-brand" onClick={mostrarInicio}>
+            <span className="store-brand-mark"><ShoppingBag size={18} /></span>
+            <span>YOUR BRAND</span>
+          </button>
+
+          <button
+            type="button"
+            className="store-menu-toggle"
+            onClick={() => setStoreMenuOpen((prev) => !prev)}
+            aria-label={storeMenuOpen ? t('ecommerce_cerrar_menu') : t('ecommerce_abrir_menu')}
+            aria-expanded={storeMenuOpen}
+          >
+            {storeMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+
+          <nav className={`store-nav-links ${storeMenuOpen ? 'open' : ''}`} aria-label={t('ecommerce_navegacion')}>
+            <button type="button" className={activeStoreSection === 'inicio' ? 'active' : ''} onClick={mostrarInicio}>{t('ecommerce_nav_inicio')}</button>
+            <button type="button" className={activeStoreSection === 'catalogo' ? 'active' : ''} onClick={() => seleccionarCategoria('todos')}>{t('ecommerce_nav_categorias')}</button>
+            <button type="button" onClick={() => seleccionarCategoria('Accesorio')}>{t('ecommerce_categoria_accesorios')}</button>
+            <button type="button" onClick={() => seleccionarCategoria('Laptop')}>{t('ecommerce_categoria_laptops')}</button>
+            <button type="button" onClick={() => seleccionarCategoria('Monitor')}>{t('ecommerce_categoria_monitores')}</button>
+          </nav>
+
+          <button type="button" className="store-nav-cart" onClick={() => setDrawerOpen(true)}>
+            <ShoppingBag size={17} />
+            <span>{t('ecommerce_carrito')}</span>
+            <span className="cart-badge">{totalItems}</span>
+          </button>
+        </div>
+
+        {activeStoreSection === 'catalogo' && <div className="store-layout">
           <aside className="filters-sidebar" aria-label="Filtros de productos">
             <div className="filters-panel">
               <div className="filter-group">
@@ -179,7 +265,7 @@ function EcommerceDemo() {
             </div>
           </aside>
 
-          <div className="catalog-panel">
+          <div className="catalog-panel" id="store-catalog">
             <div className="product-grid">
               {productosFiltrados.map((producto) => (
                 <article key={producto.id} className="product-card">
@@ -207,7 +293,26 @@ function EcommerceDemo() {
               ))}
             </div>
           </div>
-        </div>
+        </div>}
+
+        {activeStoreSection === 'inicio' && <section className="store-contact" id="store-contact">
+          <div>
+            <span className="eyebrow">{t('ecommerce_contacto_eyebrow')}</span>
+            <h2>{t('ecommerce_contacto_titulo')}</h2>
+            <p>{t('ecommerce_contacto_descripcion')}</p>
+          </div>
+          <form className="store-contact-form" onSubmit={(event) => event.preventDefault()}>
+            <label htmlFor="store-contact-name">{t('ecommerce_contacto_nombre')}</label>
+            <input id="store-contact-name" type="text" placeholder={t('ecommerce_contacto_placeholder_nombre')} />
+            <label htmlFor="store-contact-email">{t('form_email')}</label>
+            <input id="store-contact-email" type="email" placeholder={t('ecommerce_contacto_placeholder_email')} />
+            <label htmlFor="store-contact-message">{t('ecommerce_contacto_mensaje')}</label>
+            <textarea id="store-contact-message" rows="3" placeholder={t('ecommerce_contacto_placeholder_mensaje')} />
+            <button type="submit" className="primary-btn">{t('ecommerce_contacto_boton')}</button>
+            <small>{t('ecommerce_contacto_nota')}</small>
+          </form>
+        </section>}
+
       </div>
 
       <aside className={`cart-drawer ${drawerOpen ? 'open' : ''}`} aria-label="Carrito de compras">

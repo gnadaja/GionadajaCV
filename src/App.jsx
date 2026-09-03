@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ArrowRight, LayoutDashboard } from 'lucide-react';
 import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
@@ -14,6 +15,7 @@ import Contacto from './components/Contacto';
 import Login from './components/Login';
 import Register from './components/Register';
 import EcommerceDemo from './components/EcommerceDemo';
+import StoreDashboard from './components/StoreDashboard';
 import Checkout from './components/Checkout';
 import NotFound from './components/NotFound';
 
@@ -46,6 +48,19 @@ function PortfolioPage() {
           {t('portfolio_demo_tienda_boton')}
         </Link>
       </section>
+
+      <section className="section demo-card store-dashboard-cta">
+        <div>
+          <span className="eyebrow">{t('ecommerce_dashboard_eyebrow')}</span>
+          <h2>{t('ecommerce_dashboard_titulo')}</h2>
+          <p>{t('ecommerce_dashboard_descripcion')}</p>
+        </div>
+        <Link to="/ecommerce/dashboard" className="primary-btn store-dashboard-btn">
+          <LayoutDashboard size={18} />
+          <span>{t('ecommerce_dashboard_boton')}</span>
+          <ArrowRight size={17} />
+        </Link>
+      </section>
     </div>
   );
 }
@@ -68,6 +83,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/registro" element={<Register />} />
               <Route path="/ecommerce" element={<EcommerceDemo />} />
+              <Route path="/ecommerce/dashboard" element={<StoreDashboard />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
