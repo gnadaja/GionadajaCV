@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowRight, LayoutDashboard } from 'lucide-react';
+import { ArrowRight, BarChart3, LayoutDashboard } from 'lucide-react';
 import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
@@ -60,6 +60,25 @@ function PortfolioPage() {
           <span>{t('ecommerce_dashboard_boton')}</span>
           <ArrowRight size={17} />
         </Link>
+      </section>
+
+      <section className="section demo-card data-analyst-cta">
+        <div>
+          <span className="eyebrow">{t('data_analyst_eyebrow')}</span>
+          <h2>{t('data_analyst_titulo')}</h2>
+          <p>{t('data_analyst_descripcion')}</p>
+          <p className="data-analyst-stack">{t('data_analyst_stack')}</p>
+        </div>
+        <a
+          href="https://ai-data-analyst-two.vercel.app/"
+          className="primary-btn store-dashboard-btn"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <BarChart3 size={18} />
+          <span>{t('data_analyst_boton')}</span>
+          <ArrowRight size={17} />
+        </a>
       </section>
     </div>
   );

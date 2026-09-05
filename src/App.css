@@ -1715,6 +1715,12 @@ textarea {
   color: var(--text-soft);
 }
 
+.data-analyst-stack {
+  margin-top: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
 .store-dashboard-btn {
   display: inline-flex;
   align-items: center;
